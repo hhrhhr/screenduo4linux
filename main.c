@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <libusb.h>
 #include <linux/hid.h>
+#include "image.h"
 
 #define DEV_VID		0x1043
 #define DEV_PID		0x3100
@@ -236,14 +237,9 @@ int main(int argc, char *argv[]) {
 
 	memset(data, 0x00, sizeof(image) - sizeof(image_t));
 
-	while(1) {
-		for(r = 0; r < header->w * header->h * 3; r += 3) {
-			data[r+0] = rand() % 255;
-			data[r+1] = rand() % 255;
-			data[r+2] = rand() % 255;
-		}
-		dev_write(device, image, sizeof(image));
-	}
+	for(r = 0; r < header->w * header->h * 3; r += 3)
+		HEADER_PIXEL(header_data, (&data[r]));
+	dev_write(device, image, sizeof(image));
 
 	libusb_attach_kernel_driver(device, HID_IF);
 	libusb_close(device);
