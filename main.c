@@ -4,7 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <libusb.h>
-#include <linux/hid.h>
+//#include <linux/hid.h>
 #include "image.h"
 
 #define DEV_VID 0x1043
@@ -14,6 +14,8 @@
 #define HID_WR_EP 0x02
 #define HID_RD_EP 0x81
 
+#pragma pack(push, 1)
+
 typedef struct {
     uint32_t dCBWSignature;
     uint32_t dCBWTag;
@@ -21,7 +23,7 @@ typedef struct {
     uint8_t bmCBWFlags;
     uint8_t bCBWLUN;
     uint8_t bCBWCBLength;
-} __attribute__ ((packed)) cbw_t;
+} /*__attribute__ ((packed))*/ cbw_t;
 
 typedef struct {
     uint16_t u1;
@@ -30,7 +32,7 @@ typedef struct {
     uint8_t index; //?
     uint8_t u2;
     uint8_t unused[4];
-} __attribute__ ((packed)) cb_header_t;
+} /*__attribute__ ((packed))*/ cb_header_t;
 
 typedef struct {
     uint16_t u1;
@@ -39,7 +41,7 @@ typedef struct {
     uint8_t index; //?
     uint8_t u2;
     uint8_t unused[485];
-} __attribute__ ((packed)) cb_footer_t;
+} /*__attribute__ ((packed))*/ cb_footer_t;
 
 typedef struct {
     uint8_t u1;
@@ -55,7 +57,9 @@ typedef struct {
     uint16_t u9;
     uint16_t u10;
     uint16_t u11;
-} __attribute__ ((packed)) image_t;
+} /*__attribute__ ((packed))*/ image_t;
+
+#pragma pack(pop)
 
 int hw_init(libusb_device_handle *device) {
     if (libusb_reset_device(device) != 0) {
